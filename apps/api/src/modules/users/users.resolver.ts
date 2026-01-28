@@ -1,22 +1,23 @@
-import { Resolver, Query, Args, Context, Mutation } from "@nestjs/graphql";
+import { Resolver, Query, Args, Context, Mutation, Int } from "@nestjs/graphql";
 import { UseGuards } from "@nestjs/common";
 import { GqlAuthGuard } from "../auth/guards/gql-auth.guard";
 import { UsersService } from "./users.service";
-import { User, UserProfile } from "@vibecoder/types";
+import { User } from "./entities/user.entity";
+import { UpdateProfileInput } from "./dto/update-profile.input";
 
 @Resolver(() => User)
 export class UsersResolver {
   constructor(private usersService: UsersService) {}
 
-  @Query(() => User)
-  async user(@Args("id") id: string): Promise<User | null> {
+  @Query(() => User, { nullable: true })
+  async user(@Args("id", { type: () => String }) id: string): Promise<User | null> {
     return this.usersService.findById(id);
   }
 
   @Query(() => [User])
   async searchUsers(
-    @Args("query") query: string,
-    @Args("limit", { defaultValue: 20 }) limit: number,
+    @Args("query", { type: () => String }) query: string,
+    @Args("limit", { type: () => Int, defaultValue: 20 }) limit: number,
   ): Promise<User[]> {
     return this.usersService.searchUsers(query, limit);
   }
@@ -24,8 +25,8 @@ export class UsersResolver {
   @Mutation(() => User)
   @UseGuards(GqlAuthGuard)
   async updateProfile(
-    @Args("input") profileData: Partial<UserProfile>,
-    @Context() context,
+    @Args("input", { type: () => UpdateProfileInput }) profileData: UpdateProfileInput,
+    @Context() context: any,
   ): Promise<User> {
     const userId = context.req.user.id;
     return this.usersService.updateProfile(userId, profileData);

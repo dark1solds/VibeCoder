@@ -7,7 +7,7 @@ import { AuthResolver } from "./auth.resolver";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { LocalStrategy } from "./strategies/local.strategy";
 import { UsersModule } from "../users/users.module";
-import { CacheModule } from "../cache/cache.module";
+import { CacheModule } from "../../cache/cache.module";
 
 @Module({
   imports: [

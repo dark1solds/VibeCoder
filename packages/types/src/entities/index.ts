@@ -1,21 +1,21 @@
 export enum UserRole {
-  USER = "user",
-  CREATOR = "creator",
-  ADMIN = "admin",
+  USER = "USER",
+  CREATOR = "CREATOR",
+  ADMIN = "ADMIN",
 }
 
 export enum ListingStatus {
-  DRAFT = "draft",
-  PUBLISHED = "published",
-  ARCHIVED = "archived",
-  REMOVED = "removed",
+  DRAFT = "DRAFT",
+  PUBLISHED = "PUBLISHED",
+  ARCHIVED = "ARCHIVED",
+  REMOVED = "REMOVED",
 }
 
 export enum PricingType {
-  ONE_TIME = "one_time",
-  SUBSCRIPTION = "subscription",
-  USAGE_BASED = "usage_based",
-  FREE = "free",
+  ONE_TIME = "ONE_TIME",
+  SUBSCRIPTION = "SUBSCRIPTION",
+  USAGE_BASED = "USAGE_BASED",
+  FREE = "FREE",
 }
 
 export enum LicenseType {

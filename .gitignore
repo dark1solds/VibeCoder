@@ -1,0 +1,40 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# testing
+coverage/
+
+# next.js
+.next/
+out/
+
+# turbo
+.turbo/
+
+# build
+dist/
+build/
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+
+# os
+.DS_Store
+Thumbs.db
+
+# miscellanous
+vibecoder-implementation.tar.gz
+temp/
+tmp/

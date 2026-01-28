@@ -20,7 +20,7 @@ model User {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   // Relations
-  profile     UserProfile @relation(fields: [id], references: [id], onDelete: Cascade)
+  profile     UserProfile?
   listings    Listing[]    @relation("UserListings")
   purchases   Purchase[]   @relation("UserPurchases")
   reviews     Review[]
@@ -93,7 +93,7 @@ model Listing {
   creator         User          @relation("UserListings", fields: [creatorId], references: [id])
   category        Category      @relation(fields: [categoryId], references: [id])
   techStack       ListingTechnology[]
-  aiMetadata      AIMetadata    @relation(fields: [id], references: [id], onDelete: Cascade)
+  aiMetadata      AIMetadata?
   files           CodeFile[]
   versions        ListingVersion[]
   reviews         Review[]

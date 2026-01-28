@@ -2,7 +2,9 @@ import { Resolver, Mutation, Args, Context, Query } from "@nestjs/graphql";
 import { UseGuards } from "@nestjs/common";
 import { GqlAuthGuard } from "./guards/gql-auth.guard";
 import { AuthService } from "./auth.service";
-import { LoginInput, RegisterInput, AuthResponse } from "@vibecoder/types";
+import { LoginInput } from "./dto/login.input";
+import { RegisterInput } from "./dto/register.input";
+import { AuthResponse } from "./dto/auth-response.dto";
 import { User } from "../users/entities/user.entity";
 
 @Resolver(() => AuthResponse)
@@ -11,21 +13,21 @@ export class AuthResolver {
 
   @Mutation(() => AuthResponse)
   async login(
-    @Args("loginInput") loginInput: LoginInput,
+    @Args("loginInput", { type: () => LoginInput }) loginInput: LoginInput,
   ): Promise<AuthResponse> {
     return this.authService.login(
       await this.authService.validateUser(
         loginInput.email,
         loginInput.password,
       ),
-    );
+    ) as any;
   }
 
   @Mutation(() => AuthResponse)
   async register(
-    @Args("input") registerInput: RegisterInput,
+    @Args("input", { type: () => RegisterInput }) registerInput: RegisterInput,
   ): Promise<AuthResponse> {
-    return this.authService.register(registerInput);
+    return this.authService.register(registerInput) as any;
   }
 
   @Mutation(() => Boolean)
@@ -37,16 +39,16 @@ export class AuthResolver {
 
   @Mutation(() => AuthResponse)
   async refreshToken(
-    @Args("refreshToken") refreshToken: string,
+    @Args("refreshToken", { type: () => String }) refreshToken: string,
     @Context() context,
   ): Promise<AuthResponse> {
     const user = context.req.user;
-    return this.authService.refreshToken(user.id, refreshToken);
+    return this.authService.refreshToken(user.id, refreshToken) as any;
   }
 
   @Query(() => User)
   @UseGuards(GqlAuthGuard)
   async me(@Context() context): Promise<User> {
-    return this.authService.getProfile(context.req.user.id);
+    return this.authService.getProfile(context.req.user.id) as any;
   }
 }

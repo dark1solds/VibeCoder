@@ -10,6 +10,8 @@ import { ListingsModule } from "./modules/listings/listings.module";
 import { PaymentsModule } from "./modules/payments/payments.module";
 import { SandboxModule } from "./modules/sandbox/sandbox.module";
 import { SearchModule } from "./modules/search/search.module";
+import { ReviewsModule } from "./modules/reviews/reviews.module";
+import { StorageModule } from "./modules/storage/storage.module";
 import { DatabaseModule } from "./database/database.module";
 import { CacheModule } from "./cache/cache.module";
 
@@ -51,6 +53,8 @@ import { CacheModule } from "./cache/cache.module";
     PaymentsModule,
     SandboxModule,
     SearchModule,
+    ReviewsModule,
+    StorageModule,
   ],
 })
 export class AppModule {}

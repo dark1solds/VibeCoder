@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: vibecoder-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: vibecoder
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: vibecoder-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # LocalStack (for local S3 testing)
+  localstack:
+    image: localstack/localstack:latest
+    container_name: vibecoder-localstack
+    restart: unless-stopped
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - localstack_data:/tmp/localstack
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  # API (NestJS) - uncomment when ready to run in Docker
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: infrastructure/docker/Dockerfile.api
+  #   container_name: vibecoder-api
+  #   restart: unless-stopped
+  #   ports:
+  #     - "4000:4000"
+  #   environment:
+  #     DATABASE_URL: postgresql://postgres:postgres@postgres:5432/vibecoder
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379
+  #     AWS_ACCESS_KEY_ID: test
+  #     AWS_SECRET_ACCESS_KEY: test
+  #     AWS_REGION: us-east-1
+  #     AWS_S3_BUCKET: vibecoder-files
+  #     NODE_ENV: development
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #     localstack:
+  #       condition: service_started
+  #   volumes:
+  #     - ./apps/api:/app/apps/api
+  #     - /app/node_modules
+
+  # Web (Next.js) - uncomment when ready to run in Docker
+  # web:
+  #   build:
+  #     context: .
+  #     dockerfile: infrastructure/docker/Dockerfile.web
+  #   container_name: vibecoder-web
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     NEXT_PUBLIC_API_URL: http://localhost:4000
+  #     NEXT_PUBLIC_GRAPHQL_URL: http://localhost:4000/graphql
+  #   depends_on:
+  #     - api
+  #   volumes:
+  #     - ./apps/web:/app/apps/web
+  #     - /app/node_modules
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  localstack_data:
+    driver: local

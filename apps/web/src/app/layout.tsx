@@ -8,7 +8,14 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "VibeCoder - AI Code Marketplace",
-  description: "Buy and sell AI-generated code and software",
+  description: "Buy and sell AI-generated code and software. Discover high-quality components, APIs, and tools created with AI assistance.",
+  keywords: ["AI", "code", "marketplace", "components", "APIs", "software", "developer", "tools"],
+  authors: [{ name: "VibeCoder" }],
+  openGraph: {
+    title: "VibeCoder - AI Code Marketplace",
+    description: "Buy and sell AI-generated code and software",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

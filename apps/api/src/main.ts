@@ -30,6 +30,16 @@ async function bootstrap() {
   // API Prefix
   app.setGlobalPrefix("api");
 
+  // Swagger docs
+  const config = new DocumentBuilder()
+    .setTitle("VibeCoder API")
+    .setDescription("The VibeCoder platform API")
+    .setVersion("1.0")
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup("docs", app, document);
+
   await app.listen(process.env.PORT || 4000);
   console.log(`🚀 API Server running on ${process.env.PORT || 4000}`);
 }

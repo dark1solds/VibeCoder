@@ -9,7 +9,8 @@ import { UsersService } from "../users/users.service";
 import { CacheService } from "../../cache/cache.service";
 import { PrismaService } from "../../database/prisma.service";
 import * as bcrypt from "bcrypt";
-import { User, UserRole } from "@vibecoder/types";
+import { User } from "@vibecoder/types";
+import { UserRole } from "@prisma/client";
 
 @Injectable()
 export class AuthService {
@@ -68,7 +69,9 @@ export class AuthService {
         username: user.username,
         role: user.role,
         profile: user.profile,
-      },
+        createdAt: user.createdAt || new Date(),
+        updatedAt: user.updatedAt || new Date(),
+      } as any,
       accessToken,
       refreshToken,
     };

@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../database/prisma.service";
 import { User, UserProfile, UserRole } from "@vibecoder/types";
+import { UpdateProfileInput } from "./dto/update-profile.input";
 
 @Injectable()
 export class UsersService {
@@ -52,7 +53,7 @@ export class UsersService {
 
   async updateProfile(
     userId: string,
-    profileData: Partial<UserProfile>,
+    profileData: UpdateProfileInput,
   ): Promise<User> {
     const user = await this.prisma.user.update({
       where: { id: userId },
