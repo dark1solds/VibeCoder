@@ -1,0 +1,29 @@
+{
+  "name": "vibecoder",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "type-check": "turbo run type-check",
+    "db:migrate": "cd apps/api && npm run db:migrate",
+    "db:generate": "cd apps/api && npm run db:generate",
+    "db:seed": "cd apps/api && npm run db:seed"
+  },
+  "devDependencies": {
+    "turbo": "^1.13.3",
+    "typescript": "^5.6.3",
+    "@types/node": "^20.17.6",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3"
+  },
+  "packageManager": "npm@10.2.4",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

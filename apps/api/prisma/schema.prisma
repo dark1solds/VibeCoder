@@ -1,0 +1,240 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  username    String   @unique
+  passwordHash String  @map("password_hash")
+  role        UserRole @default(USER)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  profile     UserProfile @relation(fields: [id], references: [id], onDelete: Cascade)
+  listings    Listing[]    @relation("UserListings")
+  purchases   Purchase[]   @relation("UserPurchases")
+  reviews     Review[]
+
+  @@map("users")
+}
+
+model UserProfile {
+  userId      String  @id @map("user_id")
+  displayName String? @map("display_name")
+  bio         String?
+  avatarUrl   String? @map("avatar_url")
+  githubUrl   String? @map("github_url")
+  twitterUrl  String? @map("twitter_url")
+  websiteUrl  String? @map("website_url")
+
+  // Relations
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+model Category {
+  id          String @id @default(cuid())
+  name        String @unique
+  slug        String @unique
+  description String?
+
+  // Relations
+  listings    Listing[]
+
+  @@map("categories")
+}
+
+model Technology {
+  id        String @id @default(cuid())
+  name      String @unique
+  category  String
+  logoUrl   String? @map("logo_url")
+
+  // Relations
+  listings  ListingTechnology[]
+
+  @@map("technologies")
+}
+
+model Listing {
+  id              String        @id @default(cuid())
+  creatorId       String        @map("creator_id")
+  title           String
+  slug            String        @unique
+  description     String
+  categoryId      String        @map("category_id")
+  status          ListingStatus @default(DRAFT)
+  pricingType     PricingType   @map("pricing_type")
+  priceCents      Int?          @map("price_cents")
+  currency        String        @default("USD")
+  licenseType     LicenseType   @map("license_type")
+  licenseText     String?       @map("license_text")
+  licenseRestrictions String[]  @map("license_restrictions")
+  viewsCount      Int           @default(0) @map("views_count")
+  purchasesCount  Int           @default(0) @map("purchases_count")
+  ratingAverage   Decimal?      @map("rating_average")
+  ratingCount     Int           @default(0) @map("rating_count")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  publishedAt     DateTime?     @map("published_at")
+
+  // Relations
+  creator         User          @relation("UserListings", fields: [creatorId], references: [id])
+  category        Category      @relation(fields: [categoryId], references: [id])
+  techStack       ListingTechnology[]
+  aiMetadata      AIMetadata    @relation(fields: [id], references: [id], onDelete: Cascade)
+  files           CodeFile[]
+  versions        ListingVersion[]
+  reviews         Review[]
+  purchases       Purchase[]
+
+  @@map("listings")
+}
+
+model ListingTechnology {
+  listingId     String @map("listing_id")
+  technologyId  String @map("technology_id")
+
+  // Relations
+  listing       Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  technology    Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@id([listingId, technologyId])
+  @@map("listing_technologies")
+}
+
+model AIMetadata {
+  listingId       String   @id @map("listing_id")
+  modelName       String   @map("model_name")
+  provider        String
+  promptHistory   Json     @map("prompt_history")
+  generationDate  DateTime @map("generation_date")
+  tokenUsage      Int?     @map("token_usage")
+  temperature     Decimal? @map("temperature")
+
+  // Relations
+  listing         Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@map("ai_metadata")
+}
+
+model ListingVersion {
+  id          String   @id @default(cuid())
+  listingId   String   @map("listing_id")
+  version     String
+  changelog   String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  files       CodeFile[]
+  purchases   Purchase[]
+
+  @@unique([listingId, version])
+  @@map("listing_versions")
+}
+
+model CodeFile {
+  id            String   @id @default(cuid())
+  listingId     String   @map("listing_id")
+  versionId     String?  @map("version_id")
+  filename      String
+  filePath      String   @map("file_path")
+  language      String
+  sizeBytes     Int      @map("size_bytes")
+  contentHash   String   @map("content_hash")
+  storageUrl    String   @map("storage_url")
+  isMain        Boolean  @default(false) @map("is_main")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // Relations
+  listing       Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  version       ListingVersion? @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@map("code_files")
+}
+
+model Purchase {
+  id                    String         @id @default(cuid())
+  buyerId               String         @map("buyer_id")
+  listingId             String         @map("listing_id")
+  versionId             String         @map("version_id")
+  amountCents           Int            @map("amount_cents")
+  currency              String
+  stripePaymentIntentId String?        @map("stripe_payment_intent_id")
+  status                PurchaseStatus @default(PENDING)
+  purchasedAt           DateTime       @default(now()) @map("purchased_at")
+
+  // Relations
+  buyer                 User           @relation("UserPurchases", fields: [buyerId], references: [id])
+  listing               Listing        @relation(fields: [listingId], references: [id])
+  version               ListingVersion @relation(fields: [versionId], references: [id])
+  reviews               Review[]
+
+  @@map("purchases")
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  listingId   String   @map("listing_id")
+  userId      String   @map("user_id")
+  purchaseId  String   @map("purchase_id")
+  rating      Int
+  comment     String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id])
+  purchase    Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  @@unique([listingId, userId])
+  @@map("reviews")
+}
+
+// Enums
+enum UserRole {
+  USER
+  CREATOR
+  ADMIN
+}
+
+enum ListingStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  REMOVED
+}
+
+enum PricingType {
+  ONE_TIME
+  SUBSCRIPTION
+  USAGE_BASED
+  FREE
+}
+
+enum LicenseType {
+  MIT
+  APACHE_2_0
+  GPL_3_0
+  BSD_3
+  PROPRIETARY
+}
+
+enum PurchaseStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}

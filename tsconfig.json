@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@vibecoder/types": ["./packages/types/src"],
+      "@vibecoder/ui": ["./packages/ui/src"],
+      "@vibecoder/config": ["./packages/config/src"],
+      "@vibecoder/utils": ["./packages/utils/src"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
