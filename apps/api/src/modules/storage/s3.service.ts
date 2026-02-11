@@ -105,4 +105,17 @@ export class S3Service {
 
     return this.s3.send(command);
   }
+
+  /**
+   * Get file content as string
+   */
+  async getFileContent(key: string): Promise<string> {
+    const command = new GetObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+    });
+
+    const response = await this.s3.send(command);
+    return response.Body?.transformToString() || "";
+  }
 }

@@ -1,6 +1,7 @@
 import { ObjectType, Field, ID, Int, Float, registerEnumType } from "@nestjs/graphql";
 import { ListingStatus, PricingType, LicenseType } from "@vibecoder/types";
 import { User } from "../../users/entities/user.entity";
+import { CodeFile } from "./code-file.entity";
 
 registerEnumType(ListingStatus, { name: "ListingStatus" });
 registerEnumType(PricingType, { name: "PricingType" });
@@ -142,6 +143,9 @@ export class Listing {
 
   @Field(() => AIMetadata, { nullable: true })
   aiMetadata?: AIMetadata;
+
+  @Field(() => [CodeFile], { nullable: true })
+  files?: CodeFile[];
 
   @Field(() => ListingStatus)
   status!: ListingStatus;

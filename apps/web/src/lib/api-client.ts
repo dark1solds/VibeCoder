@@ -222,6 +222,14 @@ export const queries = {
           ratingAverage
           ratingCount
         }
+        files {
+          id
+          filename
+          language
+          sizeBytes
+          isMain
+          content
+        }
         createdAt
         publishedAt
       }

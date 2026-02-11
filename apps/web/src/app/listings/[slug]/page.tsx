@@ -36,6 +36,7 @@ import {
 import { apiClient, queries } from "@/lib/api-client";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useToast } from "@/components/ui/use-toast";
+import { CodePreview } from "@/components/code-preview";
 
 export default function ListingDetailPage() {
   const params = useParams();
@@ -187,6 +188,13 @@ export default function ListingDetailPage() {
                 {data.description || "No description provided."}
               </div>
             </div>
+
+            {/* Code Preview */}
+            {data.files && data.files.length > 0 && (
+              <div className="animate-in stagger-2">
+                <CodePreview files={data.files} />
+              </div>
+            )}
 
             {/* AI Metadata Card */}
             {data.aiMetadata && (
